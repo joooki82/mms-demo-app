@@ -7,7 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tsystems.mms.demoapp.common.exception.ResourceNotFoundException;
 import com.tsystems.mms.demoapp.dto.UserCommand;
+import com.tsystems.mms.demoapp.dto.UserDto;
+import com.tsystems.mms.demoapp.model.OrganisationalUnit;
+import com.tsystems.mms.demoapp.service.OrganisationalUnitService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,10 +22,12 @@ import java.util.List;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final OrganisationalUnitService organisationalUnitService;
 
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, OrganisationalUnitService organisationalUnitService) {
 		this.userRepository = userRepository;
+		this.organisationalUnitService = organisationalUnitService;
 	}
 
 	/**
@@ -29,15 +35,41 @@ public class UserService {
 	 * 
 	 * @return List of users.
 	 */
-	public List<User> getAll() {
-		return userRepository.findAll();
+	public List<UserDto> getAll() {
+		
+		List<User> userListFromDatabase = userRepository.findAll();
+		
+		List<UserDto> userDtoList = new ArrayList();
+		
+		for (User user : userListFromDatabase) {
+			userDtoList.add(new UserDto(
+					user.getId(),
+					user.getEmail(), 
+					user.getFirstName(),
+					user.getSurname(), 
+					user.getGender().name(),
+					user.getOrganisationalUnit().getOrganisationalUnitName()) );
+		}
+		
+		return userDtoList;
 	}
 
-	public User getUserById(Long id) {
+	public UserDto getUserById(Long id) {
 
-		return userRepository.findById(id)
+		
+		
+		User userFromDataBaseUser = userRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
-
+		
+		UserDto userDto = new UserDto(
+				userFromDataBaseUser.getId(),
+				userFromDataBaseUser.getEmail(),
+				userFromDataBaseUser.getFirstName(),
+				userFromDataBaseUser.getSurname(), 
+				userFromDataBaseUser.getGender().name(),
+				userFromDataBaseUser.getOrganisationalUnit().getOrganisationalUnitName());
+		
+		return userDto;
 	}
 
 	public Long saveUser(User user) {
@@ -54,6 +86,17 @@ public class UserService {
 	public void deleteUser(Long id) {
 		userRepository.deleteById(id);
 
+	}
+
+	public void assignUserToOrganisation(Long userId, Long organisationalId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+		
+		OrganisationalUnit organisationalUnit = organisationalUnitService.getOrganisationalUnitById(organisationalId);
+				
+		user.setOrganisationalUnit(organisationalUnit);
+		
+		
 	}
 
 }

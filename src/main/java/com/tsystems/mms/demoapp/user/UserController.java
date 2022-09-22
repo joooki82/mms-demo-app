@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tsystems.mms.demoapp.dto.UserCommand;
+import com.tsystems.mms.demoapp.dto.UserDto;
 
 /**
  * RESTful API controller for managing users.
@@ -38,14 +40,15 @@ public class UserController {
 	 * @return A list of users.
 	 */
 	@GetMapping("/user")
-	public ResponseEntity<List<User>> getUsers() {
+	public ResponseEntity<List<UserDto>> getUsers() {
 
 		LOGGER.info("Get all users from the database");
+		
 		return ResponseEntity.ok(userService.getAll());
 	}
 
 	@GetMapping("/user/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable Long id) {
+	public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
 
 		LOGGER.info("Get one user by id from the database");
 		return ResponseEntity.ok(userService.getUserById(id));
@@ -73,5 +76,17 @@ public class UserController {
 		userService.deleteUser(id);
 		return ResponseEntity.ok().build();
 	}
+	
+	@GetMapping("/userassigntoorganisation")
+	public ResponseEntity<Void> assignUserToOrganisationalUnit(@RequestParam(name ="userId") Long userId, @RequestParam(name="organisationalId") Long organisationalId) {
+
+		LOGGER.info("User assined to an organisational unit int the database");
+		userService.assignUserToOrganisation(userId, organisationalId);
+		return ResponseEntity.ok().build();
+	}
+	
+	
+	
+	
 
 }
