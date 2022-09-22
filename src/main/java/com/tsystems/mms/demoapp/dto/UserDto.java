@@ -74,6 +74,12 @@ public class UserDto {
 		this.organisationUnit = organisationUnit;
 	}
 
+	public UserDto() {
+		super();
+	}
+	
+	
+
 
 	
 	
