@@ -35,4 +35,10 @@ public class UserService {
 				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
 	}
+
+	public Long saveUser(User user) {
+		User savedUser = userRepository.save(user);
+		return savedUser.getId();
+	}
+
 }
