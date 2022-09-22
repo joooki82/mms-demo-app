@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tsystems.mms.demoapp.common.exception.NotPropoerEmailAddressException;
 import com.tsystems.mms.demoapp.dto.UserCommand;
 import com.tsystems.mms.demoapp.dto.UserDto;
 
@@ -54,7 +55,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/user")
-	public ResponseEntity<URI> saveUser(@RequestBody User user) {
+	public ResponseEntity<URI> saveUser(@RequestBody User user) throws NotPropoerEmailAddressException {
 		LOGGER.info("User has been saved to the database");
 		Long userId = userService.saveUser(user);
 		return ResponseEntity.created(URI.create("/api/v1.0/user/" + userId)).build();
