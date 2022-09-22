@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tsystems.mms.demoapp.common.exception.NotPropoerEmailAddressException;
 import com.tsystems.mms.demoapp.common.exception.ResourceNotFoundException;
 import com.tsystems.mms.demoapp.dto.UserCommand;
 import com.tsystems.mms.demoapp.dto.UserDto;
 import com.tsystems.mms.demoapp.model.OrganisationalUnit;
 import com.tsystems.mms.demoapp.service.OrganisationalUnitService;
+import com.tsystems.mms.demoapp.validator.EmailValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,9 +74,15 @@ public class UserService {
 		return userDto;
 	}
 
-	public Long saveUser(User user) {
-		User savedUser = userRepository.save(user);
-		return savedUser.getId();
+	public Long saveUser(User user) throws NotPropoerEmailAddressException {
+		
+		if (EmailValidator.isValid(user.getEmail())) {
+			User savedUser = userRepository.save(user);
+			return savedUser.getId();
+		} else {
+			
+			throw new NotPropoerEmailAddressException("Not proper email address: " + user.getEmail());
+		}		
 	}
 
 	public void updateUser(Long id, UserCommand userCommand) {
