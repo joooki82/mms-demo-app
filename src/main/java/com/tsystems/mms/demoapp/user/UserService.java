@@ -46,9 +46,14 @@ public class UserService {
 	}
 
 	public void updateUser(Long id, UserCommand userCommand) {
-		User originalUser = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + id));
+		User originalUser = userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 		BeanUtils.copyProperties(userCommand, originalUser);
 	}
 
+	public void deleteUser(Long id) {
+		userRepository.deleteById(id);
+
+	}
 
 }
