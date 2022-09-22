@@ -1,9 +1,12 @@
 package com.tsystems.mms.demoapp.user;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tsystems.mms.demoapp.common.exception.ResourceNotFoundException;
+import com.tsystems.mms.demoapp.dto.UserCommand;
 
 import java.util.List;
 
@@ -16,6 +19,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 
+	@Autowired
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
@@ -40,5 +44,11 @@ public class UserService {
 		User savedUser = userRepository.save(user);
 		return savedUser.getId();
 	}
+
+	public void updateUser(Long id, UserCommand userCommand) {
+		User originalUser = userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found with id: " + id));
+		BeanUtils.copyProperties(userCommand, originalUser);
+	}
+
 
 }

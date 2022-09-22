@@ -9,9 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.tsystems.mms.demoapp.dto.UserCommand;
 
 /**
  * RESTful API controller for managing users.
@@ -51,6 +54,14 @@ public class UserController {
 		LOGGER.info("User has been saved to the database");
 		Long userId = userService.saveUser(user);
 		return ResponseEntity.created(URI.create("/api/v1.0/user/" + userId)).build();
+	}
+	
+	@PutMapping("/user/{id}")
+	public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserCommand userCommand) {
+
+		LOGGER.info("User has been updated in the database");
+		userService.updateUser(id, userCommand);
+		return ResponseEntity.ok().build();
 	}
 
 }
